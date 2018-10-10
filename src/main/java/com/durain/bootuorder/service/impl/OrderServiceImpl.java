@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.durain.bootuorder.dataobject.OrderMaster;
 import com.durain.bootuorder.dto.OrderDTO;
@@ -14,6 +15,7 @@ import com.durain.bootuorder.repository.OrderMasterRepository;
 import com.durain.bootuorder.service.OrderService;
 import com.durain.bootuorder.utils.UuidUtil;
 
+@Service
 public class OrderServiceImpl implements OrderService {
 
 	@Autowired
@@ -24,16 +26,16 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public OrderDTO createOrder(OrderDTO orderDto) {
+		orderDto.setOrderId(UuidUtil.genUniqueKey());
+		
 		OrderMaster orderMaster = new OrderMaster();
 		BeanUtils.copyProperties(orderDto, orderMaster);
 		orderMaster.setOrderAmount(new BigDecimal(5));
 		orderMaster.setOrderStatus(OrderStatusEnum.NEW.getCode());
 		orderMaster.setPayStatus(PayStatusEnum.NEW.getCode());
-		orderMaster.setOrderId(UuidUtil.genUniqueKey());
 		orderMasterRepository.save(orderMaster);
 		
-		
-		return null;
+		return orderDto;
 	}
 
 }
